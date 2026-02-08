@@ -25,7 +25,7 @@ class GeminiAnalyzer:
             
             # Configuration du modèle
             self.model = genai.GenerativeModel(
-                model_name='gemma-3-27b-it',  # Gemini 2.0 Flash (le plus rapide)
+                model_name='gemini-3-flash-preview',  # Gemini 2.0 Flash (le plus rapide)
                 generation_config={
                     'temperature': 0.7,  # Équilibre créativité/précision
                     'top_p': 0.95,
@@ -69,13 +69,9 @@ class GeminiAnalyzer:
             # Préparer le prompt
             prompt = AnalysisPrompts.get_prompt_for_type(analysis_type)
             
-            # Préparer l'image au format attendu par Gemini (inline_data en snake_case)
-            image_part = {
-                "inline_data": {
-                    "mime_type": mime_type,
-                    "data": base64.standard_b64encode(image_bytes).decode("utf-8")
-                }
-            }
+            # Convertir l'image en base64 et créer un Part correctement formaté
+            image_data_b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
+            image_part = Part.from_data(data=image_data_b64, mime_type=mime_type)
             
             logger.info(f"Analyzing image ({len(image_bytes)} bytes) with type: {analysis_type}")
             
