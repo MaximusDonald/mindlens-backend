@@ -69,9 +69,13 @@ class GeminiAnalyzer:
             # Préparer le prompt
             prompt = AnalysisPrompts.get_prompt_for_type(analysis_type)
             
-            # Convertir l'image en base64 et créer un Part correctement formaté
-            image_data_b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
-            image_part = Part.from_data(data=image_data_b64, mime_type=mime_type)
+            # Préparer l'image au format attendu par Gemini (inline_data en snake_case)
+            image_part = {
+                "inline_data": {
+                    "mime_type": mime_type,
+                    "data": base64.standard_b64encode(image_bytes).decode("utf-8")
+                }
+            }
             
             logger.info(f"Analyzing image ({len(image_bytes)} bytes) with type: {analysis_type}")
             
